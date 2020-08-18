@@ -6,8 +6,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +28,8 @@ public class MainActivity extends AppCompatActivity {
     Button requestBtn;
     RepoAdapter adapter;
     List<Repo> repoList;
+    API api;
+    ProgressBar progressBar;
 
 
     @Override
@@ -33,10 +37,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        input = findViewById(R.id.user_input);
-        requestBtn = findViewById(R.id.requestBtn);
+        input = (EditText) findViewById(R.id.user_input);
+        requestBtn = (Button) findViewById(R.id.requestBtn);
         repoList = new ArrayList<>();
-
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.GONE);
 
         adapter = new RepoAdapter(MainActivity.this, repoList);
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
@@ -46,20 +51,21 @@ public class MainActivity extends AppCompatActivity {
 
         requestBtn.setOnClickListener(view -> {
 
-            String user = input.getText().toString();
-            String baseUrl = "https://api.github.com/users/" + user + "/";
+            progressBar.setVisibility(View.VISIBLE);
+
             Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(baseUrl)
+                    .baseUrl("https://api.github.com/users/")
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
 
-            API api = retrofit.create(API.class);
-            Call<List<Repo>> request = api.getRepos();
+            api = retrofit.create(API.class);
+            Call<List<Repo>> request = api.getRepos(input.getText().toString());
             request.enqueue(new Callback<List<Repo>>() {
                 @Override
                 public void onResponse(Call<List<Repo>> call, Response<List<Repo>> response) {
                     if (response.isSuccessful()){
                         repoList.clear();
+                        progressBar.setVisibility(View.GONE);
                         repoList.addAll(response.body());
                         adapter.notifyDataSetChanged();
 

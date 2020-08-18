@@ -10,6 +10,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,11 +28,13 @@ public class RepoAdapter extends RecyclerView.Adapter <RepoAdapter.Holder> {
     public static class Holder extends RecyclerView.ViewHolder {
 
         TextView name, link;
+        ImageView avatar;
 
         public Holder(@NonNull View itemView) {
             super(itemView);
             name = itemView.findViewById(R.id.name);
             link = itemView.findViewById(R.id.link);
+            avatar = itemView.findViewById(R.id.avatar);
         }
     }
 
@@ -45,6 +49,10 @@ public class RepoAdapter extends RecyclerView.Adapter <RepoAdapter.Holder> {
     public void onBindViewHolder(@NonNull RepoAdapter.Holder holder, int position) {
         holder.name.setText(repoList.get(position).getName());
         holder.link.setText(repoList.get(position).getLink());
+
+        Picasso.get()
+                .load(repoList.get(position).getOwner().getAvatarUrl())
+                .into(holder.avatar);
     }
 
     @Override
