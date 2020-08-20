@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
                 .build();
 
         JsonPlaceHolderAPI api = retrofit.create(JsonPlaceHolderAPI.class);
-        Call<List<Post>> request = api.getPosts();
+        Call<List<Post>> request = api.getPosts(new Integer[]{3,5,7,9,10}, null, "desc");  // desc - descent order, ascent  - ascent order
 
         request.enqueue(new Callback<List<Post>>() {
             @Override
